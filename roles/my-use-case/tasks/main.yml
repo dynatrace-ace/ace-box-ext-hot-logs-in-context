@@ -29,7 +29,7 @@
 - include_role:
     name: app-easytrade
   vars:
-    easytrade_image_tag: "latest"
+    easytrade_image_tag: "0d8bdc7"
     easytrade_headlessloadgen_tag: "latest"
 
 - set_fact:
