@@ -17,13 +17,20 @@
 
 - include_role:
     name: app-easytravel
+  vars:
+    easytravel_image_tag: "2.0.0.3599"
 
 
 - include_role:
     name: app-hipstershop
-
+  vars:
+    hipstershop_image_tag: "latest"
+    
 - include_role:
     name: app-easytrade
+  vars:
+    easytrade_image_tag: "latest"
+    easytrade_headlessloadgen_tag: "latest"
 
 - set_fact:
     include_dashboard_value_file: "{{ role_path }}/templates/apps-dashboard.yml.j2"
