@@ -1,0 +1,29 @@
+---
+useCases:
+
+  app-easytravel:
+    previews:
+    - section: EasyTravel
+      description: EasyTravel Web
+      url: "http://easytravel.{{ ingress_domain }}"
+  app-easytrade:
+    previews:
+    - section: EasyTrade
+      description: EasyTrade Web
+      url: "http://easytrade.{{ ingress_domain }}/ui"
+  app-hipstershop:
+    previews:
+    - section: Hipstershop
+      description: Hipstershop Web
+      url: "http://hipstershop.{{ ingress_domain }}"
+
+extRefs:
+  EasyTravel Web:
+    url: "http://easytravel.{{ ingress_domain }}"
+    description: "<a href=\"http://easytravel.{{ ingress_domain }}\">EasyTravel</a> is a travel application"
+  EasyTrade Web:
+    url: "http://easytrade.{{ ingress_domain }}/ui"
+    description: "<a href=\"http://easytrade.{{ ingress_domain }}/ui\">EasyTrade</a> is a trading app"
+  Hipstershop Web:
+    url: "http://hipstershop.{{ ingress_domain }}"
+    description: "<a href=\"http://hipstershop.{{ ingress_domain }}\">Hipstershop</a> is a shop for cool items"

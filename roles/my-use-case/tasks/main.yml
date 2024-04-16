@@ -1,3 +1,36 @@
 ---
-- debug:
-    msg: "Hello from your external use case!"
+- include_role:
+    name: microk8s
+
+- include_role:
+    name: dt-activegate-classic
+  vars:
+    activegate_install_synthetic: true
+
+- include_role:
+    name: dt-operator
+
+- include_role:
+    name: monaco-v2
+  vars:
+    monaco_version: "v{{ monacoVersion }}"
+
+- include_role:
+    name: app-easytravel
+
+
+- include_role:
+    name: app-hipstershop
+
+- include_role:
+    name: app-easytrade
+
+- set_fact:
+    include_dashboard_value_file: "{{ role_path }}/templates/apps-dashboard.yml.j2"
+
+- include_role:
+    name: dashboard
+    tasks_from: template-values-file
+
+- include_role:
+    name: dashboard
