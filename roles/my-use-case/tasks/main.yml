@@ -17,8 +17,8 @@
 
 - include_role:
     name: app-easytravel
-  vars:
-    easytravel_image_tag: "latest" #"2.0.0.3599"
+#  vars:
+#    easytravel_image_tag: "2.0.0.3599"
 
 
 - include_role:
