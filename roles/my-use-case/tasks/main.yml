@@ -18,7 +18,7 @@
 - include_role:
     name: app-easytravel
   vars:
-    easytravel_image_tag: "2.0.0.3599"
+    easytravel_image_tag: "latest" #"2.0.0.3599"
 
 
 - include_role:
@@ -29,7 +29,7 @@
 - include_role:
     name: app-easytrade
   vars:
-    easytrade_image_tag: "0d8bdc7"
+    easytrade_image_tag: "latest" #"0d8bdc7"
     easytrade_headlessloadgen_tag: "latest"
 
 - set_fact:
