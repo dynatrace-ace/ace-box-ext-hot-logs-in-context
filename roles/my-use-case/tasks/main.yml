@@ -1,5 +1,10 @@
 ---
 
+- name: Set inotify max instances so DB doesn't crash
+  become: true
+  become_user: root
+  ansible.builtin.command: 'sysctl fs.inotify.max_user_instances=512'
+
 - name: Set Workflow Variables 1
   shell: |
     sed -i "s/ACTOR_ID/{{ extra_vars.workflow_actor_id }}/g" "{{ role_path }}/files/monaco/workflows/business.json"
