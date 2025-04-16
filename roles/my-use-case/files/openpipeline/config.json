@@ -256,7 +256,7 @@
         "editable": true,
         "builtin": false,
         "pipelineId": "pipeline_Pipeline_Name_2166",
-        "matcher": "k8s.deployment.name == \"unguard-user-auth-service-*\"",
+        "matcher": "k8s.container.name == \"user-auth-service\"",
         "note": "unguard-auth-service-*"
       },
       {
