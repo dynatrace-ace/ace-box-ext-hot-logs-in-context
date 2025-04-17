@@ -42,18 +42,31 @@ There are multiple apps at your disposal for viewing/analyzing logs. For initial
 
 We can now see *all* the logs that were generated in the last two hours. But we want to narrow it down to investigate our problem and show only relevant logs. 
 
-4. To filter the result, click on **status** and select “**ERROR**”. This will filter logs with errors.
-5.	Further, use the content box to filter for all logs related to **login**. You can do this simply by typing “**login**” for the option “**contains**”
-6. Now click on **Run Query** for these filters to be applied. *Remember*, the filtering options will not be applied automatically. After every change you have to click “*run query*” for the changes to be applied.
+4. To filter the result, click in the filter field and select **status**. Then select **=** and “**ERROR**” from the preview. This will filter logs with errors.
+5. 
+![Filter on Status](../../assets/images/01_filterForError.png)
 
-Now we can see all the error logs related to login for the selected timeframe, but from the problem card we already know that the issue is with the **unguard-user-auth-service**. Therefore we can filter it down further and look at the exact logs pertaining to the issue
+6.	Further, use the content box to filter for all logs related to **login**. You can do this simply selecting content in the filterfield, select '=' and then **\*value\***. Set this to **"\*login\*"**
+
+![Filter on Content](../../assets/images/01_filterForLogin.png)
+
+7. Now click on **Run Query** for these filters to be applied. *Remember*, the filtering options will not be applied automatically. After every change you have to click “*run query*” for the changes to be applied.
+
+Now we can see all the error logs related to login for the selected timeframe, but from the problem card we already know that the issue is with the **user-auth-service**.
 
 By default, the logs app shows a few basic filters and most common columns, but you can add a column for any of the available *properties* that you desire and add a filter for it.
 
-7. Click on “**xx columns hidden**” to reveal all available columns. Select "**k8s.namespace.name**" and “**k8s.container.name**”. Click on **confirm** to add them to the analysis view
-8. Now click on **any log line** to view the log contents and all the metadata for it. In this screen you can use any of the metadata to filter the result. Look for *k8s.container.name* and click on the **filter icon** next to it and add it as filter.  
+8. Click on “**xx columns hidden**” to reveal all available columns. Select "**k8s.namespace.name**" and “**k8s.container.name**”. Click on **confirm** to add them to the analysis view
 
-![Log MetaData](../../assets/images/01_add_filter.png)
+![Select these columns](../../assets/images/01_columnNamesVisible.png)
+ 
+9. Now click on **any log line** to view the log contents and all the metadata for it. In this screen you can use any of the metadata to filter the result. Look for *k8s.container.name* and click on the **filter icon** next to it and add it as filter.  
+
+![Select these columns](../../assets/images/01_filterForContainer.png)
+
+10. Finally, let's also filter for this namespace. Instead of opening the log record, we can also click on the three vertical dots in a record and filter on those values. Click on the three dots next to unguard and add this as a filter.
+
+![Select these columns](../../assets/images/01_filterForNamespace)
 
 So far, we've been interacting with the UI in a really simple way without the need for extensive querying knowledge. What's behind each of these queries? It is written using *Dynatrace Query Language*, also known as *DQL*. 
 
