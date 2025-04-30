@@ -1,0 +1,57 @@
+---
+configs:
+  - id: allowedOutboundConnectionsDisabled
+    config:
+      name: allowed-outbound-connections
+      template: allowed-outbound-connections.json
+    type:
+      settings:
+        schema: builtin:dt-javascript-runtime.allowed-outbound-connections
+        scope: environment
+  - id: disableESM
+    config:
+      name: disableESM
+      template: disableESM.json
+    type:
+      settings:
+        schema: builtin:oneagent.features
+        scope: environment
+  - id: anom-detection
+    config:
+      name: anom-detection
+      template: anomDetection.json
+    type:
+      settings:
+        schema: builtin:anomaly-detection.services
+        scope: environment
+  - id: ingestAllLogs
+    config:
+      name: logs-ingest
+      template: log.json
+    type:
+      settings:
+        schema: builtin:logmonitoring.log-storage-settings
+        scope: environment
+  - id: failureDetection
+    config:
+      name: failureDetection
+      template: FailureDetection.json
+    type:
+      settings:
+        schema: builtin:failure-detection.environment.parameters
+        scope: environment
+  - id: ignoreMicroblog
+    config:
+      name: ignoreMicroblog
+      template: Microblog.json
+      parameters:
+        rule_object:
+          type: reference
+          project: global
+          configType: builtin:failure-detection.environment.parameters
+          configId: failureDetection
+          property: id
+    type:
+      settings:
+        schema: builtin:failure-detection.environment.rules
+        scope: environment

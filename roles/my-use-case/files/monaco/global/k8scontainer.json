@@ -1,0 +1,15 @@
+{
+  "name": "K8s Container",
+  "variables": {
+    "type": "query",
+    "value": "fetch logs\n| filter isNotNull(k8s.container.name)\n| summarize count(), by:k8s.container.name\n| fields k8s.container.name"
+  },
+  "isPublic": true,
+  "includes": [
+    {
+      "filter": "{\"type\":\"Group\",\"range\":{\"from\":0,\"to\":40},\"logicalOperator\":\"AND\",\"explicit\":false,\"children\":[{\"type\":\"Statement\",\"range\":{\"from\":0,\"to\":40},\"key\":{\"type\":\"Key\",\"textValue\":\"k8s.container.name\",\"value\":\"k8s.container.name\",\"range\":{\"from\":0,\"to\":18}},\"operator\":{\"type\":\"ComparisonOperator\",\"textValue\":\"=\",\"value\":\"=\",\"range\":{\"from\":19,\"to\":20}},\"value\":{\"type\":\"String\",\"textValue\":\"$k8s.container.name\",\"value\":\"$k8s.container.name\",\"range\":{\"from\":21,\"to\":40}}}]}",
+      "dataObject": "logs",
+      "applyTo": []
+    }
+  ]
+}

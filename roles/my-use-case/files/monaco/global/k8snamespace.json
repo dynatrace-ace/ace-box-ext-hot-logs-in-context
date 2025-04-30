@@ -1,0 +1,15 @@
+{
+  "name": "K8s Namespace",
+  "variables": {
+    "type": "query",
+    "value": "fetch dt.entity.cloud_application_namespace\n| fields namespace = entity.name"
+  },
+  "isPublic": true,
+  "includes": [
+    {
+      "filter": "{\"type\":\"Group\",\"range\":{\"from\":0,\"to\":34},\"logicalOperator\":\"AND\",\"explicit\":false,\"children\":[{\"type\":\"Statement\",\"range\":{\"from\":0,\"to\":33},\"key\":{\"type\":\"Key\",\"textValue\":\"k8s.namespace.name\",\"value\":\"k8s.namespace.name\",\"range\":{\"from\":0,\"to\":18}},\"operator\":{\"type\":\"ComparisonOperator\",\"textValue\":\"=\",\"value\":\"=\",\"range\":{\"from\":19,\"to\":20}},\"value\":{\"type\":\"String\",\"textValue\":\"\\\"$namespace\\\"\",\"value\":\"$namespace\",\"isEscaped\":true,\"range\":{\"from\":21,\"to\":33}}}]}",
+      "dataObject": "logs",
+      "applyTo": []
+    }
+  ]
+}

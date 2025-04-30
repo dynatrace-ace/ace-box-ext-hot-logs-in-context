@@ -1,0 +1,29 @@
+---
+configs:
+  - id: security_workflow
+    config:
+      name: "Security Lab Workflow"
+      template: security.json
+      skip: false
+      parameters:
+        actor_id:
+          type: environment
+          name: WORKFLOW_ACTOR_ID
+        easyTradeAddress:
+          type: environment
+          name: EASYTRADE_ADDRESS
+    type:
+      automation:
+        resource: workflow
+  - id: business_workflow
+    config:
+      name: "Lab 2 workflow"
+      template: business.json
+      skip: false
+      parameters:
+        actor_id:
+          type: environment
+          name: WORKFLOW_ACTOR_ID
+    type:
+      automation:
+        resource: workflow

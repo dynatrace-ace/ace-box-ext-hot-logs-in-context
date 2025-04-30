@@ -1,0 +1,17 @@
+{
+        "name": "Microblog Rule",
+        "enabled": true,
+        "parameterId": "{{.rule_object}}",
+        "conditions": [
+          {
+            "attribute": "SERVICE_NAME",
+            "predicate": {
+              "predicateType": "CONTAINS",
+              "textValues": [
+                "MicroblogController"
+              ],
+              "caseSensitive": false
+            }
+          }
+        ]
+      }

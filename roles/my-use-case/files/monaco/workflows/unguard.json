@@ -1,0 +1,40 @@
+{
+  "title": "Unguard Traffic Workflow",
+  "tasks": {
+    "run_javascript_1": {
+      "name": "run_javascript_1",
+      "action": "dynatrace.automations:run-javascript",
+      "description": "Build a custom task running js Code",
+      "input": {
+        "script": "// optional import of sdk modules\nimport { execution } from '@dynatrace-sdk/automation-utils';\n\nexport default async function ({ executionId }) {\n  const userPass = 'ROBOT_' + Math.floor(Math.random() * 10000).toString(16)\n  \n  let response = await fetch(\"UNGUARD_ADDRESS/ui/login\", {\n    \"body\": \"username=\" + userPass + \"&password=\" + userPass + \"&login=\",\n    \"headers\": {\n        \"Content-Type\": \"application/x-www-form-urlencoded\",\n    },\n    \"method\": \"POST\",\n});\n  return await response.status;\n}"
+      },
+      "position": {
+        "x": 0,
+        "y": 1
+      },
+      "predecessors": [],
+      "withItems": "item in [1, 2, 3]",
+      "concurrency": 1
+    }
+  },
+  "description": "",
+  "actor": "ACTOR_ID",
+  "ownerType": "USER",
+  "isPrivate": false,
+  "trigger": {
+    "schedule": {
+      "isActive": true,
+      "isFaulty": false,
+      "trigger": {
+        "cron": "* * * * *",
+        "type": "cron"
+      },
+      "rule": null,
+      "filterParameters": {},
+      "timezone": "UTC",
+      "inputs": {},
+      "nextExecution": "2024-12-03T09:50:00.000Z"
+    }
+  },
+  "schemaVersion": 3
+}

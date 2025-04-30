@@ -1,0 +1,6 @@
+{
+        "enabled": true,
+        "config-item-title": "Ingest Everything",
+        "send-to-storage": true,
+        "matchers": []
+}

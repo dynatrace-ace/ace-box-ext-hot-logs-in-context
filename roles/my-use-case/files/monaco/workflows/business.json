@@ -1,0 +1,63 @@
+{
+  "title": "Lab 2 workflow",
+  "tasks": {
+    "get_loop_steps": {
+      "name": "get_loop_steps",
+      "action": "dynatrace.automations:run-javascript",
+      "description": "Build a custom task running js Code",
+      "input": {
+        "script": "// optional import of sdk modules\nimport { execution } from '@dynatrace-sdk/automation-utils';\n\nexport default async function ({ execution_id }) {\n  const steps = Math.floor((Math.random()*30));\n  return { steps : new Array(steps).fill(1), };\n}"
+      },
+      "position": {
+        "x": 0,
+        "y": 1
+      },
+      "predecessors": []
+    },
+    "run_javascript_2": {
+      "name": "run_javascript_2",
+      "action": "dynatrace.automations:run-javascript",
+      "description": "Build a custom task running js Code",
+      "input": {
+        "script": "/*\n* This function will run in the DYNATRACE JavaScript runtime.\n* For information visit https://dt-url.net/functions-help\n*/\n\nimport { logsClient } from \"@dynatrace-sdk/client-classic-environment-v2\";\n\nconst category = [\"moderation\",\"moderation\",\"moderation\",\"advertisements\",\"advertisements\",\"advertisements\",\"advertisements\",\"emails\",\"emails\",\"registration\",\"timelines\",\"timelines\",\"timelines\",\"payments\",\"posts\",\"payments\",\"posts\",\"chatgptcontent\",\"visuals\",\"visuals\",\"gdpr\"];\n\nexport default async function () {\n\n  const pickedCategory = category[Math.floor(Math.random() * 20)];\n  const jobNumber = batchJobNumber();\n  const pickedStartTime = startTime(Date.now());\n  const pickedEndTime = endTime(Date.now());\n  \n  await sendStartLog(pickedCategory, jobNumber, pickedStartTime)\n  if (Math.random() * 100 > 2) {\n    await sendEndLog(pickedCategory, jobNumber, pickedEndTime)\n  }\n\n  return { \"category\" : pickedCategory,\n           \"jobNumber\" : jobNumber,\n           \"startTime\" : startTime(Date.now()),\n           \"endTime\" : endTime(Date.now()), }\n\n}\n\nasync function sendStartLog(category, jobNumber, startTime) {\n  const data = await logsClient.storeLog({\n  type: \"application/json\",\n  body: [\n    {\n      content: \"Job \" + category + \" - \" + jobNumber + \" started.\",\n      \"log.source\": \"Unguard Job Service Provider\",\n      timestamp: startTime,\n      severity: \"INFO\",\n      \"category\": category,\n      \"jobId\": jobNumber,\n      \"state\": \"started\",\n    }\n  ],\n});\n}\n\nasync function sendEndLog(category, jobNumber, endTime) {\n  const data = await logsClient.storeLog({\n  type: \"application/json\",\n  body: [\n    {\n      content: \"Job \" + category + \".\" + jobNumber + \" finished.\",\n      \"log.source\": \"Unguard Job Service Provider\",\n      timestamp: endTime,\n      severity: \"INFO\",\n      \"category\": category,\n      \"jobId\": jobNumber,\n      \"state\": \"finished\",\n    }\n  ],\n});\n}\n\nfunction batchJobNumber() {\n  return crypto.randomUUID();\n}\n\nfunction endTime(now) {\n  return new Date(now).toISOString();\n}\n\nfunction startTime(now) {\n  return new Date(now - Math.random() * 1000000).toISOString();\n}"
+      },
+      "position": {
+        "x": 0,
+        "y": 2
+      },
+      "predecessors": [
+        "get_loop_steps"
+      ],
+      "conditions": {
+        "states": {
+          "get_loop_steps": "OK"
+        }
+      },
+      "withItems": "steps in {{result(\"get_loop_steps\").steps}}",
+      "concurrency": 10
+    }
+  },
+  "description": "",
+  "actor": "ACTOR_ID",
+  "ownerType": "USER",
+  "isPrivate": false,
+  "trigger": {
+    "schedule": {
+      "isActive": true,
+      "isFaulty": false,
+      "trigger": {
+        "type": "interval",
+        "intervalMinutes": 1
+      },
+      "rule": null,
+      "filterParameters": {
+        "earliestStart": "2024-08-23",
+        "earliestStartTime": "07:46"
+      },
+      "timezone": "UTC",
+      "inputs": {},
+      "nextExecution": "2024-09-05T14:13:00.000Z"
+    }
+  },
+  "schemaVersion": 3
+}

@@ -1,0 +1,272 @@
+{
+  "id": "logs",
+  "editable": true,
+  "version": "1734617311044-783357eff2ea905b",
+  "customBasePath": "/platform/ingest/custom/logs",
+  "endpoints": [
+    {
+      "enabled": true,
+      "builtin": true,
+      "editable": false,
+      "basePath": "-",
+      "segment": "",
+      "displayName": "OneAgent",
+      "defaultBucket": null,
+      "processors": [],
+      "routing": {
+        "type": "dynamic"
+      }
+    },
+    {
+      "enabled": true,
+      "builtin": true,
+      "editable": false,
+      "basePath": "-",
+      "segment": "",
+      "displayName": "Extensions",
+      "defaultBucket": null,
+      "processors": [],
+      "routing": {
+        "type": "dynamic"
+      }
+    },
+    {
+      "enabled": true,
+      "builtin": true,
+      "editable": false,
+      "basePath": "/api/v2/otlp/v1/logs",
+      "segment": "",
+      "displayName": "OpenTelemetry",
+      "defaultBucket": null,
+      "processors": [],
+      "routing": {
+        "type": "dynamic"
+      }
+    },
+    {
+      "enabled": true,
+      "builtin": true,
+      "editable": false,
+      "basePath": "/api/v2/logs/ingest",
+      "segment": "",
+      "displayName": "Classic Environment API",
+      "defaultBucket": null,
+      "processors": [],
+      "routing": {
+        "type": "dynamic"
+      }
+    }
+  ],
+  "pipelines": [
+    {
+      "type": "default",
+      "enabled": true,
+      "editable": true,
+      "id": "pipeline_Pipeline_Name_2166",
+      "builtin": false,
+      "displayName": "Unguard Auth Service",
+      "storage": {
+        "editable": true,
+        "catchAllBucketName": "default_logs",
+        "processors": []
+      },
+      "securityContext": {
+        "editable": true,
+        "processors": []
+      },
+      "metricExtraction": {
+        "editable": true,
+        "processors": []
+      },
+      "dataExtraction": {
+        "editable": true,
+        "processors": []
+      },
+      "processing": {
+        "editable": true,
+        "processors": [
+          {
+            "type": "dql",
+            "enabled": true,
+            "editable": true,
+            "id": "processor_Statuscode_4847",
+            "description": "Statuscode",
+            "matcher": "true",
+            "sampleData": null,
+            "dqlScript": "parse content, \"DATA '\\\"-\\\"' SPACE INT:statusCode\""
+          },
+          {
+            "type": "fieldsAdd",
+            "enabled": true,
+            "editable": true,
+            "id": "processor_errorStatus_2712",
+            "description": "errorStatus",
+            "matcher": "statusCode >= 500",
+            "sampleData": null,
+            "fields": [
+              {
+                "name": "status",
+                "value": "ERROR"
+              }
+            ]
+          },
+          {
+            "type": "fieldsAdd",
+            "enabled": true,
+            "editable": true,
+            "id": "processor_warnStatus_2719",
+            "description": "warnStatus",
+            "matcher": "statusCode < 500 AND statusCode >= 400",
+            "sampleData": null,
+            "fields": [
+              {
+                "name": "status",
+                "value": "WARN"
+              }
+            ]
+          },
+          {
+            "type": "fieldsAdd",
+            "enabled": true,
+            "editable": true,
+            "id": "processor_infoStatus_5459",
+            "description": "infoStatus",
+            "matcher": "statusCode < 400",
+            "sampleData": null,
+            "fields": [
+              {
+                "name": "status",
+                "value": "INFO"
+              }
+            ]
+          },
+          {
+            "type": "dql",
+            "enabled": true,
+            "editable": true,
+            "id": "processor_MaskPassword_9867",
+            "description": "MaskPassword",
+            "matcher": "matchesValue(content,\"*\\\"password\\\"*\")",
+            "sampleData": "{\n      \"timestamp\": \"2025-01-09T08:43:01.543000000Z\",\n      \"content\": \"[2025-01-09T08:43:01.543Z] ::ffff:10.42.0.33 - - \\\"POST /user/login HTTP/1.1\\\" - {\\\"username\\\":\\\"ROBOT_1c67\\\",\\\"password\\\":\\\"ROBOT_1c67\\\"} \\\"{\\\\\\\"message\\\\\\\":\\\\\\\"Unable to authenticate users at this time.\\\\\\\"}\\\" \\\"axios/0.20.0\\\" \\\"-\\\" 500 2.384 ms\",\n      \"aws.region\": \"us-west-2\",\n      \"aws.resource.id\": \"i-0ee893919fe70c6f6\",\n      \"dt.entity.cloud_application_instance\": \"CLOUD_APPLICATION_INSTANCE-D8FAB1DE30AEC6C5\",\n      \"dt.entity.cloud_application_namespace\": \"CLOUD_APPLICATION_NAMESPACE-23ADBE54F669464A\",\n      \"dt.entity.container_group\": \"CONTAINER_GROUP-5CF884076DE5980F\",\n      \"dt.entity.container_group_instance\": \"CONTAINER_GROUP_INSTANCE-C697730226EBCA28\",\n      \"dt.entity.host\": \"HOST-BBE2E2FCFBF28BCD\",\n      \"dt.entity.kubernetes_cluster\": \"KUBERNETES_CLUSTER-EAB9EC2A74F29AC3\",\n      \"dt.entity.kubernetes_node\": \"KUBERNETES_NODE-F14E3530522F0A6A\",\n      \"dt.entity.process_group\": \"PROCESS_GROUP-4EBB3457465B8668\",\n      \"dt.entity.process_group_instance\": \"PROCESS_GROUP_INSTANCE-6D71FD734A83EEAA\",\n      \"dt.host_group.id\": \"ace-box\",\n      \"dt.kubernetes.cluster.name\": \"dynakube\",\n      \"dt.kubernetes.node.system_uuid\": \"ec28b8c8-412f-5f75-f5de-a17a2b964e36\",\n      \"dt.source_entity\": \"PROCESS_GROUP_INSTANCE-6D71FD734A83EEAA\",\n      \"host.name\": \"TEST\\\\ Perform\\\\ 2025\\\\ \\\\ S02\\\\ Analyze\\\\ Logs\\\\ in\\\\ Context\",\n      \"k8s.cluster.name\": \"dynakube\",\n      \"k8s.container.name\": \"user-auth-service\",\n      \"k8s.deployment.name\": \"unguard-user-auth-service-*\",\n      \"k8s.namespace.name\": \"unguard\",\n      \"k8s.pod.name\": \"unguard-user-auth-service-765f8d8968-tlcdk\",\n      \"k8s.pod.uid\": \"15de3f11-293a-4233-a0fe-181a96663747\",\n      \"log.source\": \"Container Output\",\n      \"loglevel\": \"NONE\",\n      \"process.technology\": [\n        \"C-Library\",\n        \"Containerd\",\n        \"Node.js\"\n      ],\n      \"status\": \"ERROR\",\n      \"aws.availability_zone\": \"us-west-2b\",\n      \"dt.entity.aws_availability_zone\": \"AWS_AVAILABILITY_ZONE-A6F56B8F3F636E5F\",\n      \"dt.entity.ec2_instance\": \"EC2_INSTANCE-72C145D77ED01167\",\n      \"dt.entity.host_group\": \"HOST_GROUP-5A6C652D2B4086FC\",\n      \"dt.openpipeline.pipelines\": [\n        \"logs:pipeline_Pipeline_Name_2166\"\n      ],\n      \"dt.process_group.detected_name\": \"bin/www (user-auth-service) unguard-user-auth-service-*\",\n      \"k8s.cluster.uid\": \"978e892a-07a0-4c04-a744-573dda55eb04\",\n      \"k8s.node.name\": \"ip-10-0-102-36\",\n      \"log.iostream\": \"stdout\",\n      \"operatorversion\": \"v1.3.2\",\n      \"statusCode\": \"500\"\n    }",
+            "dqlScript": "fieldsAdd content = replacePattern(content,\"\\\"password\\\\\\\":\\\\\\\"\\\" WORD\",\"password1\\\":\\\"****\")"
+          }
+        ]
+      }
+    },
+    {
+      "type": "default",
+      "enabled": true,
+      "editable": true,
+      "id": "pipeline_EasyTrade_3382",
+      "builtin": false,
+      "displayName": "EasyTrade",
+      "storage": {
+        "editable": true,
+        "catchAllBucketName": "default_logs",
+        "processors": []
+      },
+      "securityContext": {
+        "editable": true,
+        "processors": []
+      },
+      "metricExtraction": {
+        "editable": true,
+        "processors": []
+      },
+      "dataExtraction": {
+        "editable": true,
+        "processors": []
+      },
+      "processing": {
+        "editable": true,
+        "processors": [
+          {
+            "type": "dql",
+            "enabled": true,
+            "editable": true,
+            "id": "processor_Balance_9809",
+            "description": "Balance",
+            "matcher": "matchesValue(content, \"*Adding balance history with data*\")",
+            "sampleData": null,
+            "dqlScript": "parse content, \"\"\"data JSON:balance\"\"\"\n| fieldsAdd valueChange = balance[ValueChange], actionType = balance[ActionType], accountId = balance[AccountId], oldValue = balance[OldValue]"
+          },
+          {
+            "type": "dql",
+            "enabled": true,
+            "editable": true,
+            "id": "processor_Add_AccountId_7793",
+            "description": "Add AccountId",
+            "matcher": "matchesValue(content, \"*Withdrawing money with data*\")",
+            "sampleData": null,
+            "dqlScript": "parse content, \"data JSON:AId\"\n| fieldsAdd accountId = AId[AccountId]"
+          },
+          {
+            "type": "dql",
+            "enabled": true,
+            "editable": true,
+            "id": "processor_Id_to_accountId_1556",
+            "description": "Id to accountId",
+            "matcher": "matchesValue(content, \"*Updating account with data*\")",
+            "sampleData": null,
+            "dqlScript": "parse content, \"data JSON:Id\"\n| fieldsAdd accountId = Id[Id]"
+          }
+        ]
+      }
+    },
+    {
+      "type": "classic",
+      "enabled": true,
+      "editable": false,
+      "id": "default",
+      "builtin": true,
+      "displayName": "default",
+      "storage": {
+        "editable": false,
+        "catchAllBucketName": null,
+        "processors": []
+      },
+      "securityContext": {
+        "editable": false,
+        "processors": []
+      },
+      "metricExtraction": {
+        "editable": false,
+        "processors": []
+      },
+      "dataExtraction": {
+        "editable": false,
+        "processors": []
+      },
+      "processing": {
+        "editable": false,
+        "processors": []
+      },
+      "settingsSchema": "builtin:logmonitoring.log-dpp-rules"
+    }
+  ],
+  "routing": {
+    "editable": true,
+    "catchAllPipeline": {
+      "editable": false,
+      "pipelineId": "default"
+    },
+    "entries": [
+      {
+        "enabled": true,
+        "editable": true,
+        "builtin": false,
+        "pipelineId": "pipeline_Pipeline_Name_2166",
+        "matcher": "k8s.container.name == \"user-auth-service\"",
+        "note": "unguard-auth-service-*"
+      },
+      {
+        "enabled": true,
+        "editable": true,
+        "builtin": false,
+        "pipelineId": "pipeline_EasyTrade_3382",
+        "matcher": "k8s.container.name == \"brokerservice\"",
+        "note": "Brokerservice"
+      }
+    ]
+  }
+}

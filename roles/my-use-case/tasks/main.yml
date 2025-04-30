@@ -1,43 +1,195 @@
 ---
+
+- name: Set inotify max instances so DB doesn't crash
+  become: true
+  become_user: root
+  ansible.builtin.command: 'sysctl fs.inotify.max_user_instances=512'
+
+- name: Set Workflow Variables 1
+  shell: |
+    sed -i "s/ACTOR_ID/{{ extra_vars.workflow_actor_id }}/g" "{{ role_path }}/files/monaco/workflows/business.json"
+    sed -i "s/ACTOR_ID/{{ extra_vars.workflow_actor_id }}/g" "{{ role_path }}/files/monaco/workflows/security.json"
+    sed -i "s/ACTOR_ID/{{ extra_vars.workflow_actor_id }}/g" "{{ role_path }}/files/monaco/workflows/unguard.json"
+
+- name: Create Issue Script
+  copy:
+    mode: +x
+    dest: "/home/{{ ace_box_user }}/start_issue.sh"
+    content: |
+      #!/bin/sh
+      kubectl patch deployment unguard-user-auth-service -n unguard -p '{"spec":{"template":{"spec":{"containers":[{"name":"user-auth-service","image":"europe-west4-docker.pkg.dev/acetaskforceemea/newregistry/user-auth-service-innovate:1.0.16"}]}}}}'
+
+- name: Resolve Issue Script
+  copy:
+    mode: +x
+    dest: "/home/{{ ace_box_user }}/resolve_issue.sh"
+    content: |
+      #!/bin/sh
+      kubectl patch deployment unguard-user-auth-service -n unguard -p '{"spec":{"template":{"spec":{"containers":[{"name":"user-auth-service","image":"dynatraceace/unguard-user-auth-service:0.6.2"}]}}}}'
+
+- set_fact:
+    role_path_abs: "{{ role_path }}"
+    
 - include_role:
-    name: microk8s
+    name: monaco-v2
+
+- name: Monaco - Deploy Base Config
+  include_role:
+    name: monaco-v2
+    tasks_from: apply-monaco
+  vars:
+    monaco_manifest_path: "{{ role_path_abs }}/files/monaco/manifest.yaml"
+    monaco_project: "global"
+    monaco_environment:
+      DT_TENANT: "{{ dynatrace_tenant_url }}"
+      DT_API_TOKEN: "{{ dynatrace_api_token }}"
+      DT_PLATFORM_TENANT_URL: "{{ extra_vars.dt_environment_url_gen3 }}"
+      DT_OAUTH_CLIENT_ID: "{{ extra_vars.dt_oauth_client_id }}"
+      DT_OAUTH_CLIENT_SECRET: "{{ extra_vars.dt_oauth_client_secret }}"
+      DT_OAUTH_SSO_ENDPOINT: "{{ extra_vars.dt_oauth_sso_endpoint.rstrip('/') }}"
 
 - include_role:
-    name: dt-activegate-classic
-  vars:
-    activegate_install_synthetic: true
+    name: k3s
 
 - include_role:
     name: dt-operator
+  vars:
+    operator_mode: "classicFullStack"  
+    dt_operator_release: "v1.3.2"
+    log_monitoring: "notfluentbit"
+
+- name: app-easytrade
+  include_tasks: "{{role_path}}/files/app-easytrade/tasks/main.yaml"
+  vars:
+    easytrade_role_path: "{{role_path}}/files/app-easytrade"
+    easytrade_namespace: "easytrade"
+    easytrade_image_tag: "5aa49fb"
+    easytrade_headlessloadgen_tag: "848c2ab"
+    easytrade_domain: "easytrade.{{ ingress_domain }}"
+    easytrade_addDashboardLink: true
+    easytrade_addDashboardPreview: true
 
 - include_role:
-    name: monaco-v2
-  vars:
-    monaco_version: "v{{ monacoVersion }}"
+    name: app-unguard
 
-- include_role:
-    name: app-easytravel
-  vars:
-    easytravel_image_tag: "2.0.0.3599" #"latest" 
+- name: Remove unguard CRON job
+  become: true
+  become_user: root
+  ansible.builtin.command: 'kubectl delete cronjob -n unguard unguard-user-simulator'
 
+- name: Set App Address facts
+  set_fact:
+    easytrade_address: "{{ ingress_protocol }}://easytrade.{{ ingress_domain }}"
+    unguard_address: "{{ ingress_protocol }}://unguard.{{ ingress_domain }}"
 
-- include_role:
-    name: app-hipstershop
-  vars:
-    hipstershop_image_tag: "latest"
-    
-- include_role:
-    name: app-easytrade
-  vars:
-    easytrade_image_tag: "0d8bdc7"
-    easytrade_headlessloadgen_tag: "latest"
+- name: Set Workflow Variables 2
+  shell: |
+    sed -i "s,EASYTRADE_ADDRESS,{{ easytrade_address }},g" "{{ role_path }}/files/monaco/workflows/security.json"
+    sed -i "s,UNGUARD_ADDRESS,{{ unguard_address }},g" "{{ role_path }}/files/monaco/workflows/unguard.json"
 
-- set_fact:
-    include_dashboard_value_file: "{{ role_path }}/templates/apps-dashboard.yml.j2"
+#Generate OAuth Token
+- block:
+    - name: Request a DT OAuth access token
+      ansible.builtin.uri:
+        url: "{{ extra_vars.dt_oauth_sso_endpoint }}"
+        method: POST
+        status_code: 200
+        headers:
+          Content-Type: "application/x-www-form-urlencoded"
+        body_format: form-urlencoded
+        body:
+          grant_type: "client_credentials"
+          client_id: "{{ extra_vars.dt_oauth_client_id }}"
+          client_secret: "{{ extra_vars.dt_oauth_client_secret }}"
+          scope: "storage:filter-segments:write storage:filter-segments:read storage:filter-segments:share iam:service-users:use openpipeline:configurations:write openpipeline:configurations:read app-engine:apps:install app-engine:apps:run hub:catalog:read automation:workflows:read automation:workflows:write automation:workflows:run automation:rules:read automation:rules:write automation:calendars:read automation:calendars:write"
+          resource: "{{ extra_vars.dt_oauth_account_urn }}"
+      register: auth_response_raw
+    - set_fact:
+        dt_oauth_access_token: "{{ auth_response_raw.json.access_token }}"
+
+- name: Oauth Token Result
+  ansible.builtin.debug:
+    var: auth_response_raw
+
+- name: "Apply OpenPipeline Configuration"
+  ansible.builtin.command: 'curl -X PUT "{{ extra_vars.dt_environment_url_gen3 }}/platform/openpipeline/v1/configurations/logs"  --header "Content-Type: application/json; charset=utf-8" --header "Authorization: Bearer {{ dt_oauth_access_token }}" --data "@{{ role_path_abs }}/files/openpipeline/config.json" '
+  register: post_result
+
+- name: OpenPipeline Result
+  ansible.builtin.debug:
+    var: post_result
+
+- name: Apply Workflow 1
+  ansible.builtin.uri:
+    url: "{{ extra_vars.dt_environment_url_gen3 }}/platform/automation/v1/workflows?adminAccess=false"
+    method: POST
+    status_code: 201
+    src: "{{ role_path_abs }}/files/monaco/workflows/{{ item.fileName }}"
+    headers:
+      Content-Type: "application/json; charset=utf-8"
+      Authorization: "Bearer {{ dt_oauth_access_token }}"
+  register: _result
+  until: _result.status == 201
+  retries: 10 
+  delay: 30
+  loop:
+    - fileName: "business.json"
+    - fileName: "security.json"
+    - fileName: "unguard.json"
+
+- name: Workflow 3 Result
+  ansible.builtin.debug:
+    var: _result
+
+- name: Apply Segment 1
+  ansible.builtin.command: 'curl -X POST "{{ extra_vars.dt_environment_url_gen3 }}/platform/storage/filter-segments/v1/filter-segments"  --header "Content-Type: application/json; charset=utf-8" --header "Authorization: Bearer {{ dt_oauth_access_token }}" --data "@{{ role_path_abs }}/files/monaco/global/provider.json" '
+  register: post_segment_result_1
+
+- name: Segment 1 Result
+  ansible.builtin.debug:
+    var: post_segment_result_1
+
+- name: Apply Segment 2
+  ansible.builtin.command: 'curl -X POST "{{ extra_vars.dt_environment_url_gen3 }}/platform/storage/filter-segments/v1/filter-segments"  --header "Content-Type: application/json; charset=utf-8" --header "Authorization: Bearer {{ dt_oauth_access_token }}" --data "@{{ role_path_abs }}/files/monaco/global/k8scontainer.json" '
+  register: post_segment_result_1
+
+- name: Segment 2 Result
+  ansible.builtin.debug:
+    var: post_segment_result_1
+
+- name: Apply Segment 3
+  ansible.builtin.command: 'curl -X POST "{{ extra_vars.dt_environment_url_gen3 }}/platform/storage/filter-segments/v1/filter-segments"  --header "Content-Type: application/json; charset=utf-8" --header "Authorization: Bearer {{ dt_oauth_access_token }}" --data "@{{ role_path_abs }}/files/monaco/global/k8scluster.json" '
+  register: post_segment_result_1
+
+- name: Segment 3 Result
+  ansible.builtin.debug:
+    var: post_segment_result_1
+
+- name: Apply Segment 4
+  ansible.builtin.command: 'curl -X POST "{{ extra_vars.dt_environment_url_gen3 }}/platform/storage/filter-segments/v1/filter-segments"  --header "Content-Type: application/json; charset=utf-8" --header "Authorization: Bearer {{ dt_oauth_access_token }}" --data "@{{ role_path_abs }}/files/monaco/global/k8snamespace.json" '
+  register: post_segment_result_1
+
+- name: Segment 4 Result
+  ansible.builtin.debug:
+    var: post_segment_result_1
+
+- name: "Install app {{ item.dt_app_id }}"
+  ansible.builtin.uri:
+    url: "{{ extra_vars.dt_environment_url_gen3.rstrip('/') }}/platform/app-engine/registry/v1/apps/{{ item.dt_app_id }}:install-bundle"
+    method: POST
+    status_code: 202
+    headers:
+      Authorization: "Bearer {{ dt_oauth_access_token }}"
+  loop:
+    - dt_app_id: "dynatrace.davis.problems"
+      dt_app_Version: "1.3.1"
+    - dt_app_id: "dynatrace.email"
+      dt_app_Version: "1.0.3"
 
 - include_role:
     name: dashboard
-    tasks_from: template-values-file
 
-- include_role:
-    name: dashboard
+- name: Start Issue Generation
+  become: true
+  become_user: root
+  ansible.builtin.command: '/home/{{ ace_box_user }}/start_issue.sh'

@@ -1,2 +1,4 @@
 ---
 monacoVersion: "2.13.0"
+gitlab_group: "hot"
+gitlab_repo_name: "logs-in-context"

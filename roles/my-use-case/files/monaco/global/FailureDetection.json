@@ -1,0 +1,24 @@
+{
+        "name": "Ignore Microblog",
+        "httpResponseCodes": {
+          "serverSideErrors": "500-599",
+          "failOnMissingResponseCodeServerSide": true,
+          "clientSideErrors": "400-599",
+          "failOnMissingResponseCodeClientSide": false
+        },
+        "brokenLinks": {
+          "http404NotFoundFailures": false
+        },
+        "exceptionRules": {
+          "ignoreAllExceptions": false,
+          "successForcingExceptions": [],
+          "ignoredExceptions": [
+            {
+              "classPattern": "org.dynatrace.microblog.exceptions.NotLoggedInException"
+            }
+          ],
+          "customHandledExceptions": [],
+          "customErrorRules": [],
+          "ignoreSpanFailureDetection": false
+        }
+      }
