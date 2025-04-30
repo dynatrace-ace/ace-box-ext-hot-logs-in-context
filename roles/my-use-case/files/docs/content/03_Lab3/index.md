@@ -3,7 +3,7 @@
 ### Lab Materials
 In this lab we will work primarily out of a Notebook provided in the course materials tab in Dynatrace University. You should see 2 files, one is the working notbook and the other is an answer key. Feel free to keep the answer key open as a reference during this lab.
  
-### What will this lab focus on? 
+### What will this lab focus on?
 In this lab we’ll use the App “*Easytrade*”, which is a trading platform App where people can buy, sell, transfer and withdraw funds. We will demonstrate for you how *Easytrade* works and the importance of observing the App to see how much money is being traded (stock market never closes here). We’ll also show you how to find logs via *Notebooks* of trades and complete an exercise in data analysis to build a business dashboard.  
  
 ### Lab Objective
@@ -28,47 +28,7 @@ We’ll go through all the necessary steps to pull actionable log data together,
 Ultimately, we want to use this data, not solely just for observability purposes, but to specifically report on how our business is doing. Excercises in this lab will demonstrate how we can turn actionable data in to answers for critical performance questions like, "*Can we predict the future earnings of the platform?*", "*How much money is the platform earning?*", and, ultimately, "*is my business profitable?*"  
 
 ### Step 0: Selecting and filtering required log data
-1. Since we want to do deep analysis on the data, we will use *Notebooks* for this Lab. Open the **Notebooks App** and click the **+ icon** to create a new **DQL** section.
-2. We want to focus our analysis on the EasyTrade app. We already have Segments configured to provide the ability to filter our analysis on the *easytrade* k8s namespace. To achieve this filter, simply click on the **cube icon** in our newly created DQL section and select the **K8s Namespace** segment with the value of **easytrade**. This will filter the data just for the *EasyTrade* application.
-
-<img width="788" alt="image" src="https://github.com/user-attachments/assets/1f487770-5388-40ab-8b3c-1de9262aedf7" />
-
-3. Let us filter this content further to view data related to transactions and changes in balance. To achieve this add a filter on the **content** with the value of “**balance**”. Copy and paste **the below query** and click **run**
-
-```
-fetch logs
-| filter contains(content, "balance")
-```
-
-<img width="1174" alt="image" src="https://github.com/user-attachments/assets/88315813-8d90-4af1-a033-f1d8dd06e9a0" />
-
-We've now filtered for only logs coming from the EasyTrade app that have the word balance in the content of the log. 
-
-4. Scroll right in the table to explore the data that is available and understand how this log record has been enriched with additional metadata and context. Additionally, you can selection **Options** to visualize the date in other ways such as a record view. 
-
-5. Notice there are some fields that are very important to our business including:
-    - **accountId**
-    - **actionType**
-    - **oldValue**
-    - **valueChange**
-We want to be able to easily analyze this data wihthout viewing extra metadata. We can achieve this by defining the exact fields required using the fields command. Add the below line to the bottom of your DQL query and click run:
-
-```
-| fields timestamp, content, accountId, actionType, oldValue, valueChange, balance
-```
-
-You should now be able to see the data for those columns and understand the different transaction types and the money related to it.  
-
-<img width="1333" alt="image" src="https://github.com/user-attachments/assets/0eb18351-5185-4777-aa56-e5253dd72893" />
-
-Our full DQL query is below. This will be the base for the rest of our analysis in this Lab. 
-```
-fetch logs
-| filter contains(content, "balance")
-| fields timestamp, content, accountId, actionType, oldValue, valueChange, balance
-```
-
-Now that we have our data selected and prepared for analysis, it’s time to review the data to answer our prescribed business-level questions.
+1. The starting query has been populated for you in the Notebook! Refer to that query when needed!
 
 ### Question 1: How many deposits were made in the last 2 hours?
 Let's answer the first question: **How many deposits were made in the last two hours?**
