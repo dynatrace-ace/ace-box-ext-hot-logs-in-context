@@ -211,7 +211,7 @@ Unguard Stuck Jobs
 13. For the event description input the following:
 
 ```
-Unguard has at least {violating_samples} Stuck Jobs in the last 5 minutes
+Unguard has at least {violating_samples} Stuck Jobs in the last 60 minutes
 ```
 
 ![Event Template](../../assets/images/EventTemplate.png)
