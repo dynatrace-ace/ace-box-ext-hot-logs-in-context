@@ -66,7 +66,7 @@ By default, the logs app shows a few basic filters and most common columns, but 
 
 10. Finally, let's also filter for this namespace. Instead of opening the log record, we can also click on the three vertical dots in a record and filter on those values. Click on the three dots next to unguard and add this as a filter.
 
-![Select these columns](../../assets/images/01_filterForNamespace)
+![Select these columns](../../assets/images/01_filterForNamespace.png)
 
 So far, we've been interacting with the UI in a really simple way without the need for extensive querying knowledge. What's behind each of these queries? It is written using *Dynatrace Query Language*, also known as *DQL*. 
 
