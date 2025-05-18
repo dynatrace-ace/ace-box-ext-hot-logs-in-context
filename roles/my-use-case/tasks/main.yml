@@ -76,6 +76,7 @@
   become: true
   become_user: root
   ansible.builtin.command: 'kubectl delete cronjob -n unguard unguard-user-simulator'
+  ignore_errors: true
 
 - name: Set App Address facts
   set_fact:
