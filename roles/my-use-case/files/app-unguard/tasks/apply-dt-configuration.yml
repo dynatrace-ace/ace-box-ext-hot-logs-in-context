@@ -1,0 +1,42 @@
+# Copyright 2024 Dynatrace LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+---
+- set_fact:
+    monaco_projects_folder: "{{ role_path }}/files/monaco/projects"
+    skip_synthetic_monitor: "true"
+
+- name: Source Private Synthetic Node ID
+  include_role:
+    name: dt-activegate-classic
+    tasks_from: source-node-id
+  when: skip_synthetic_monitor == "false" and dt_synthetic_node_id is not defined 
+
+# deploy monaco and apply configurations
+- name: Deploy Monaco
+  include_role:
+    name: monaco
+
+- name: Unguard - Configure Monitoring as Code
+  include_role:
+    name: monaco
+    tasks_from: apply-monaco
+  vars:
+    monaco_project: ""
+    monaco_projects_root: "{{ monaco_projects_folder }}"
+    monaco_environment:
+      INGRESS_DOMAIN: "{{ ingress_domain }}"
+      APP_NAMESPACE: "{{ unguard_namespace }}"
+      SKIP_SYNTH: "{{ skip_synthetic_monitor }}"
+      SYNTH_NODE_ID: "{{ dt_synthetic_node_id | default(None) }}"
