@@ -14,14 +14,8 @@
 
 ---
 
-- name: Deploy MariaDB
-  kubernetes.core.helm:
-    name: unguard-mariadb
-    chart_ref: "oci://registry-1.docker.io/bitnamicharts/mariadb"
-    release_namespace: "{{ unguard_namespace }}"
-    create_namespace: true
-    wait: true
-    wait_timeout: 10m
+- name: Deploy MariaDB with command
+  ansible.builtin.command: "helm install unguard-mariadb bitnami/mariadb --version 11.5.7 --set primary.persistence.enabled=false --set image.repository=bitnamilegacy/mariadb --wait --namespace unguard --create-namespace"
 
 # Deploy Unguard
 - name: Deploy Unguard
