@@ -14,16 +14,10 @@
 
 ---
 
-# Deploy MariaDB from bitnami repository
-- name: Add bitnami chart repo
-  kubernetes.core.helm_repository:
-    name: bitnami
-    repo_url: "https://charts.bitnami.com/bitnami"
-
 - name: Deploy MariaDB
   kubernetes.core.helm:
     name: unguard-mariadb
-    chart_ref: bitnami/mariadb
+    chart_ref: "oci://registry-1.docker.io/bitnamicharts/mariadb"
     release_namespace: "{{ unguard_namespace }}"
     create_namespace: true
     wait: true
