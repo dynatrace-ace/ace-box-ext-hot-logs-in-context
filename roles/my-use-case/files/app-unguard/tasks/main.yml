@@ -14,6 +14,11 @@
 
 ---
 
+- name: Add bitnami chart repo
+  kubernetes.core.helm_repository:
+    name: bitnami
+    repo_url: "https://charts.bitnami.com/bitnami"
+
 - name: Deploy MariaDB with command
   ansible.builtin.command: "helm install unguard-mariadb bitnami/mariadb --version 11.5.7 --set primary.persistence.enabled=false --set image.repository=bitnamilegacy/mariadb --wait --namespace unguard --create-namespace"
 
