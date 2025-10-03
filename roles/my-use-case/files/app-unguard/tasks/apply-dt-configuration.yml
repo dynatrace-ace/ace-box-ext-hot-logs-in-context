@@ -14,7 +14,7 @@
 
 ---
 - set_fact:
-    monaco_projects_folder: "{{ role_path }}/files/monaco/projects"
+    monaco_projects_folder: "{{ unguard_role_path }}/files/monaco/projects"
     skip_synthetic_monitor: "true"
 
 - name: Source Private Synthetic Node ID
