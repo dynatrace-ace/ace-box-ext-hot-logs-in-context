@@ -69,7 +69,7 @@
     easytrade_addDashboardLink: true
     easytrade_addDashboardPreview: true
 
-- namep: app-unguard
+- name: app-unguard
   include_tasks: "{{role_path}}/files/app-unguard/tasks/main.yaml"
   vars:
     unguard_role_path: "{{role_path}}/files/app-unguard"
