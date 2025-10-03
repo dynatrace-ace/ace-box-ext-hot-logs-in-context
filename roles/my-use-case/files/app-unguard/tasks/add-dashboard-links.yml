@@ -15,7 +15,7 @@
 - name: Unguard - Add Dashboard Link
   block:
   - set_fact:
-      include_dashboard_value_file: "{{ role_path }}/templates/app-unguard-dashboard-link.yml.j2"
+      include_dashboard_value_file: "{{ unguard_role_path }}/templates/app-unguard-dashboard-link.yml.j2"
 
   - include_role:
       name: dashboard
@@ -25,7 +25,7 @@
 - name: Unguard - Add Dashboard Preview
   block:
   - set_fact:
-      include_dashboard_value_file: "{{ role_path }}/templates/app-unguard-dashboard-preview.yml.j2"
+      include_dashboard_value_file: "{{ unguard_role_path }}/templates/app-unguard-dashboard-preview.yml.j2"
 
   - include_role:
       name: dashboard
